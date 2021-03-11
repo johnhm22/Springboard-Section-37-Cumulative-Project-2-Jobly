@@ -2,17 +2,7 @@
 
 /** Shared config for application; can be required many places. */
 
-/*
-MY TOKEN
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjE0ODQ2MjQ3fQ.YjOA7rnaL3A-nyTwG2X6-lltIBefPC6o8zNo76bPaSc"
-}
 
-{
-  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IkpvaG4iLCJpc0FkbWluIjpmYWxzZSwiaWF0IjoxNjE1MDQ5NTU2fQ.noY9x4bye3hPzLvx89ff4-71-3Tyb-EShwefefcy53w"
-}
-
-*/
 
 require("dotenv").config();
 require("colors");

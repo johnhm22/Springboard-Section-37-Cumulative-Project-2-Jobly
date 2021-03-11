@@ -59,31 +59,31 @@ Part Two: Adding Filtering
 
   static async filter(queryResult) {
 
-const { values, setCols } = sqlForFilter(
-  queryResult,
-  {
-    title: "title",
-    salary: "salary",
-    company_handle: "company_handle"
-  });
-  
+  const { values, setCols } = sqlForFilter(
+    queryResult,
+    {
+      title: "title",
+      minSalary: "salary",
+      hasEquity: "equity"
+    });
+    
 
-console.log("These are the values: ", values);
-console.log("These are the deconstr. values: ", [...values]);
+  console.log("These are the values: ", values);
+  console.log("These are the deconstr. values: ", [...values]);
 
-console.log("This is setCols: ", setCols);
+  console.log("This is setCols: ", setCols);
 
-let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE ${setCols}`;
-  
-  const res = await db.query(mainQuery, [...values]);
-  
-  const job = res.rows;
+  let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE ${setCols}`;
+    
+    const res = await db.query(mainQuery, [...values]);
+    
+    const job = res.rows;
 
-  console.log("This is job: ", job)
+    console.log("This is job: ", job)
 
-    if (!job) throw new NotFoundError(`No job: ${filter}`);
+      if (!job) throw new NotFoundError(`No job: ${filter}`);
 
-    return job;
+      return job;
   }
 
 
@@ -100,19 +100,19 @@ let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE $
    * Throws NotFoundError if not found.
    **/
 
-  static async get(title) {
+  static async get(id) {
     const jobRes = await db.query(
           `SELECT title,
                   salary,
                   equity,
                   company_handle
            FROM jobs
-           WHERE title = $1`,
-        [title]);
+           WHERE id = $1`,
+        [id]);
 
     const job = jobRes.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${title}`);
+    if (!job) throw new NotFoundError(`No job: ${id}`);
 
     return job;
   }
@@ -129,26 +129,26 @@ let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE $
    * Throws NotFoundError if not found.
    */
 
-  static async update(title, data) {
+  static async update(id, data) {
     const { setCols, values } = sqlForPartialUpdate(
         data,
         {
           salary: "salary",
           equity: "equity",
         });
-    const titleIdx = "$" + (values.length + 1);
+    const idIdx = "$" + (values.length + 1);
 
     const querySql = `UPDATE jobs 
                       SET ${setCols} 
-                      WHERE title = ${titleIdx} 
+                      WHERE id = ${idIdx} 
                       RETURNING title, 
                                 salary, 
                                 equity,
                                 company_handle`;
-    const result = await db.query(querySql, [...values, title]);
+    const result = await db.query(querySql, [...values, id]);
     const job = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${title}`);
+    if (!job) throw new NotFoundError(`No job with reference: ${id}`);
 
     return job;
   }
@@ -160,16 +160,16 @@ let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE $
    * Throws NotFoundError if job not found.
    **/
 
-  static async remove(title) {
+  static async remove(id) {
     const result = await db.query(
           `DELETE
            FROM jobs
-           WHERE title = $1
+           WHERE id = $1
            RETURNING id`,
-        [title]);
+        [id]);
     const job = result.rows[0];
 
-    if (!job) throw new NotFoundError(`No job: ${title}`);
+    if (!job) throw new NotFoundError(`No job with reference: ${id}`);
   }
 }
 

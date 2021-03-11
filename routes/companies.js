@@ -11,6 +11,7 @@ const Company = require("../models/company");
 
 const companyNewSchema = require("../schemas/companyNew.json");
 const companyUpdateSchema = require("../schemas/companyUpdate.json");
+const companyFilterSchema = require("../schemas/companyFilter.json");
 
 const router = new express.Router();
 
@@ -67,21 +68,29 @@ http://localhost:3001/companies/filter?name=bauer&minEmployees=5&maxEmployees=20
 */
 
 router.get("/filter", async function (req, res, next) {
+  const q= req.query;
+
+  if (q.minEmployees !== undefined) q.minEmployees = +q.minEmployees;
+  if (q.maxEmployees !== undefined) q.maxEmployees = +q.maxEmployees;
+
   try {
-    console.log("This is req.query: ", req.query);
+    const validator = jsonschema.validate(req.query, companyFilterSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
+    }
+    console.log("This is req.query: ", q);
     // return res.json(req.query);
     // let queryResult = {
     //   name: "bauer",
     //   minEmployees: "5",
     //   maxEmployees: "20"
     // }
-    let queryResult = req.query
-    // can I change name to %name% ?
 
-    if(parseInt(queryResult.minEmployees) > parseInt(queryResult.maxEmployees)){
+    if(parseInt(q.minEmployees) > parseInt(q.maxEmployees)){
       throw new BadRequestError('Min employees cannot exceed max', 400);
     }
-    const companies = await Company.filter(queryResult);
+    const companies = await Company.filter(q);
     return res.json({ companies });
   } catch (err) {
     return next(err);

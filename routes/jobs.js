@@ -10,6 +10,7 @@ const { ensureLoggedIn, ensureAdmin } = require("../middleware/auth");
 const Job = require("../models/job");
 
 const jobNewSchema = require("../schemas/jobNew.json");
+const jobFilterSchema = require("../schemas/jobFilter.json");
 const jobUpdateSchema = require("../schemas/jobUpdate.json");
 
 const router = new express.Router();
@@ -32,7 +33,7 @@ router.post("/", ensureAdmin, async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
+  
     const job = await Job.create(req.body);
     return res.status(201).json({ job });
   } catch (err) {
@@ -68,21 +69,19 @@ http://localhost:3001/companies/filter?name=bauer&minEmployees=5&maxEmployees=20
 
 router.get("/filter", async function (req, res, next) {
   try {
-    console.log("This is req.query: ", req.query);
-    // return res.json(req.query);
-    // let queryResult = {
-    //   name: "bauer",
-    //   minEmployees: "5",
-    //   maxEmployees: "20"
-    // }
-    let queryResult = req.query
-    // can I change name to %name% ?
-
-    if(parseInt(queryResult.minEmployees) > parseInt(queryResult.maxEmployees)){
-      throw new BadRequestError('Min employees cannot exceed max', 400);
+    const validator = jsonschema.validate(req.query, jobFilterSchema);
+    if (!validator.valid) {
+      const errs = validator.errors.map(e => e.stack);
+      throw new BadRequestError(errs);
     }
-    const companies = await Company.filter(queryResult);
-    return res.json({ companies });
+
+
+    console.log("This is req.query: ", req.query);
+ 
+    let queryResult = req.query
+
+    const jobs = await Job.filter(queryResult);
+    return res.json({ jobs });
   } catch (err) {
     return next(err);
   }
@@ -108,20 +107,20 @@ router.get("/:id", async function (req, res, next) {
   }
 });
 
-/** PATCH /[handle] { fld1, fld2, ... } => { company }
+/** PATCH /[id] { fld1, fld2, ... } => { job }
  *
- * Patches company data.
+ * Patches jobs data.
  *
  * fields can be: { name, description, numEmployees, logo_url }
  *
- * Returns { handle, name, description, numEmployees, logo_url }
+ * Returns { title, salary, equity, company_handle }
  *
  * Authorization required: login
  */
 
-// router.patch("/:handle", ensureLoggedIn, async function (req, res, next) {
+
 router.patch("/:id", ensureAdmin, async function (req, res, next) {
-  try { //my code; added ensureAdmin middleware
+  try {
     const validator = jsonschema.validate(req.body, jobUpdateSchema);
     if (!validator.valid) {
       const errs = validator.errors.map(e => e.stack);

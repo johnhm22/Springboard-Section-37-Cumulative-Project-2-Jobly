@@ -36,25 +36,22 @@ function sqlForFilter(dataToFilter, jsToSql) {
   const keys = Object.keys(dataToFilter);
   if (keys.length === 0) throw new BadRequestError("No data");
 
-  // {name: 'bauer', minEmployees: 500} => ['"name"=$1', '"minEmployees"=$2']
-  const cols = keys.map((colName, idx) =>
-      `${jsToSql[colName] || colName}=$${idx + 1}`,
-  );
+const values = [];
 
-// need to manipulate dataToFilter to add <= to maxEmployess and >= to minEmployees
-// and % to either side of name
+let cols = [];
 
-//iterate through dataToFilter object and change values according to keys
-
-for(let prop in dataToFilter){
-  if(prop === 'name'){
-    dataToFilter[prop] = `ILIKE '%${dataToFilter[prop]}%'`;
+for(let data in dataToFilter){
+  if(data === 'name'){
+    values.push(`%${dataToFilter[data]}%`)
+    cols.push(`name ILIKE $${values.length}`)
   }
-  if(prop === 'minEmployees'){
-    dataToFilter[prop] = `>= ${dataToFilter[prop]}`;
+ else if(data === 'minEmployees'){
+    values.push(dataToFilter[data]);
+    cols.push(`num_employees >= $${values.length}`)
   }
-  if(prop === 'maxEmployees'){
-    dataToFilter[prop] = `<= ${dataToFilter[prop]}`;
+  else if (data === 'maxEmployees'){
+    values.push(dataToFilter[data])
+    cols.push(`num_employees <= $${values.length}`)
   }
 }
 
@@ -62,11 +59,8 @@ console.log("This is dataToFilter: ", dataToFilter);
 
   return {
     setCols: cols.join(" AND "),
-    values: Object.values(dataToFilter)};
+    values};
 }
-
-
-
 
 
 

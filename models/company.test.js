@@ -82,7 +82,7 @@ describe("findAll", function () {
         description: "Desc3",
         numEmployees: 3,
         logoUrl: "http://c3.img",
-      },
+      }
     ]);
   });
 });
@@ -186,6 +186,97 @@ describe("update", function () {
     }
   });
 });
+
+/************************************** filter */
+
+describe("filter", function(){
+  test("works for handle filter", async function() {
+    const queryResult = {
+      handle: "c1"
+    };
+    const res = await Company.filter(queryResult);
+      expect(res.rows).toEqual([
+        {
+          handle: "c1",
+          name: "C1",
+          description: "Desc1",
+          numEmployees: 1,
+          logoUrl: "http://c1.img",
+        },
+      ]);
+  })
+ 
+  test("filter works for minEmployees", async function() {
+    const queryResult = {
+      minEmployees: 2
+    };
+    const res = await Company.filter(queryResult);
+      expect(res.rows).toEqual([
+        {
+          handle: "c2",
+          name: "C2",
+          description: "Desc2",
+          numEmployees: 2,
+          logoUrl: "http://c2.img",
+        },
+        {
+          handle: "c3",
+          name: "C3",
+          description: "Desc3",
+          numEmployees: 3,
+          logoUrl: "http://c3.img",
+        }
+      ]);
+  })
+  
+  test("filter works for maxEmployees", async function() {
+    const queryResult = {
+      maxEmployees: 2
+    };
+    const res = await Company.filter(queryResult);
+      expect(res.rows).toEqual([
+        {
+          handle: "c1",
+          name: "C1",
+          description: "Desc1",
+          numEmployees: 1,
+          logoUrl: "http://c1.img",
+        },
+        {
+          handle: "c2",
+          name: "C2",
+          description: "Desc2",
+          numEmployees: 2,
+          logoUrl: "http://c2.img",
+        }
+      ]);
+  })
+
+
+  test("all filters work", async function() {
+    const queryResult = {
+      handle: "c2",
+      minEmployees = 2,
+      maxEmployees: 2
+    };
+    const res = await Company.filter(queryResult);
+      expect(res.rows).toEqual([
+        {
+          handle: "c2",
+          name: "C2",
+          description: "Desc2",
+          numEmployees: 2,
+          logoUrl: "http://c2.img",
+        }
+      ]);
+  })
+
+})
+
+
+
+
+
 
 /************************************** remove */
 

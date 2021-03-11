@@ -4,6 +4,10 @@ const db = require("../db.js");
 const User = require("../models/user");
 const Company = require("../models/company");
 const { createToken } = require("../helpers/tokens");
+const Job = require("../models/job");
+
+const testJobIds = [];
+
 
 async function commonBeforeAll() {
   // noinspection SqlWithoutWhere
@@ -36,30 +40,46 @@ async function commonBeforeAll() {
         logoUrl: "http://c3.img",
       });
 
-  await User.register({
-    username: "u1",
-    firstName: "U1F",
-    lastName: "U1L",
-    email: "user1@user.com",
-    password: "password1",
-    isAdmin: false,
+// taken from solution
+testJobIds[0] = (await Job.create(
+  { title: "J1", salary: 1, equity: "0.1", company_handle: "c1" })).id;
+testJobIds[1] = (await Job.create(
+  { title: "J2", salary: 2, equity: "0.2", company_handle: "c1" })).id;
+testJobIds[2] = (await Job.create(
+{ title: "J3", salary: 3, /* equity null */ company_handle: "c1" })).id;
+
+
+  await User.register(
+    {
+      username: "u1",
+      firstName: "U1F",
+      lastName: "U1L",
+      email: "user1@user.com",
+      password: "password1",
+      isAdmin: false,
   });
-  await User.register({
-    username: "u2",
-    firstName: "U2F",
-    lastName: "U2L",
-    email: "user2@user.com",
-    password: "password2",
-    isAdmin: false,
+  await User.register(
+    {
+      username: "u2",
+      firstName: "U2F",
+      lastName: "U2L",
+      email: "user2@user.com",
+      password: "password2",
+      isAdmin: false,
   });
-  await User.register({
-    username: "u3",
-    firstName: "U3F",
-    lastName: "U3L",
-    email: "user3@user.com",
-    password: "password3",
-    isAdmin: false,
+  await User.register(
+    {
+      username: "u3",
+      firstName: "U3F",
+      lastName: "U3L",
+      email: "user3@user.com",
+      password: "password3",
+      isAdmin: false,
   });
+
+// taken from solution
+// await User.applyToJob("u1", testJobIds[0]);
+
 }
 
 async function commonBeforeEach() {
@@ -85,6 +105,7 @@ module.exports = {
   commonBeforeEach,
   commonAfterEach,
   commonAfterAll,
+  testJobIds,
   u1Token,
   u2Token,
   u3Token

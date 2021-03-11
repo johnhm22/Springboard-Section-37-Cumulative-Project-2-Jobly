@@ -92,10 +92,6 @@ class User {
     );
 
     const user = result.rows[0];
-
-    console.log("This is user from User register model: ", user);
-    console.log("This is user.isAdmin from User register model: ", user.isAdmin);
-
     return user;
   }
 

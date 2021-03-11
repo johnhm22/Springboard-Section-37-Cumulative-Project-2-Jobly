@@ -79,7 +79,7 @@ describe("findAll", function () {
 
 describe("get", function () {
   test("works", async function () {
-    let job = await Job.get("jobTitle1");
+    let job = await Job.get(110); //NEED TO PREDICT WHICH ID TO SELECT BY
     expect(job).toEqual({
       title: "jobTitle1",
       salary: 10,
@@ -107,7 +107,7 @@ describe("update", function () {
   };
 
   test("works", async function () {
-    let job = await Job.update("jobTitle1", updateData);
+    let job = await Job.update(id, updateData); //NEED TO ADD CORRECT ID
     expect(job).toEqual({
       title: "jobTitle1",
       company_handle: "c1",
@@ -132,7 +132,7 @@ describe("update", function () {
       equity: null,
     };
 
-    let job = await Job.update("jobTitle1", updateDataSetNulls);
+    let job = await Job.update(id, updateDataSetNulls); //NEED TO ADD CORRECT ID
     expect(job).toEqual({
         title: "jobTitle1",
         company_handle: "c1",
@@ -174,9 +174,9 @@ describe("update", function () {
 
 describe("remove", function () {
   test("works", async function () {
-    await Job.remove("jobTitle1");
+    await Job.remove(id);
     const res = await db.query(
-        `SELECT id FROM jobs WHERE title='jobTitle1'`);
+        `SELECT * FROM jobs WHERE id=id`); //NEED TO ADD CORRECT ID
     expect(res.rows.length).toEqual(0);
   });
 

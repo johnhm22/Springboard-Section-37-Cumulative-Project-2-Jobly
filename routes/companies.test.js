@@ -117,6 +117,44 @@ describe("GET /companies", function () {
   });
 });
 
+
+/************************************** GET /companies/filter/ */
+describe("GET /companies/filter", function() {
+//filter route should successfully produce result based on query
+  test("filter works", async function () {
+    const query = {
+      name: "C1",
+      minEmployees: 1,
+      maxEmployees: 2
+    }
+    // const resp = await request(app).get(`/companies/filter/${query}`);
+    const resp = await request(app).get(`/companies/filter?name=C1`);
+    expect(resp.body).toEqual({
+      companies: [{
+        handle: "c1",
+        name: "C1",
+        description: "Desc1",
+        num_employees: 1,
+        logo_url: "http://c1.img"
+      }
+    ]
+    })
+  })
+// string introduced instead of integer to test jsonschema which requires integer
+  test("does not work schema not correct", async function () {
+    const query = {
+      name: "C1",
+      minEmployees: 1,
+      maxEmployees: 'string'
+    }
+    const resp = await request(app).get(`/companies/filter/${query}`);
+    expect(resp.statusCode).toEqual(404);
+  })
+
+
+})
+
+
 /************************************** GET /companies/:handle */
 
 describe("GET /companies/:handle", function () {
@@ -127,8 +165,8 @@ describe("GET /companies/:handle", function () {
         handle: "c1",
         name: "C1",
         description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
+        num_employees: 1,
+        logo_url: "http://c1.img",
       },
     });
   });
@@ -140,8 +178,8 @@ describe("GET /companies/:handle", function () {
         handle: "c2",
         name: "C2",
         description: "Desc2",
-        numEmployees: 2,
-        logoUrl: "http://c2.img",
+        num_employees: 2,
+        logo_url: "http://c2.img",
       },
     });
   });
@@ -167,8 +205,8 @@ describe("PATCH /companies/:handle", function () {
         handle: "c1",
         name: "C1-new",
         description: "Desc1",
-        numEmployees: 1,
-        logoUrl: "http://c1.img",
+        num_employees: 1,
+        logo_url: "http://c1.img",
       },
     });
   });

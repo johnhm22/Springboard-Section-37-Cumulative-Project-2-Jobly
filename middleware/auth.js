@@ -49,27 +49,28 @@ The isAdmin flag is passed as an argument in User.register() in the '/regiser' r
 */
 
 function ensureAdmin(req, res, next){
-  if(!res.locals.user || res.locals.user.isAdmin !== true) {
+  try{
+  if(!res.locals.user || !res.locals.user.isAdmin) {
     throw new UnauthorizedError();
   }
   return next();
 }
+catch (err) {
+  return next(err);
+  }
+}
 
 
 function ensureAdminOrUser(req, res, next){
-  console.log("ensureAdminOrUser has been called");
-  console.log("res.locals.user.username: ", res.locals.user.username);
-  console.log("username sought is: ", req.params.username);
-
-  //check tokens are the same
-
-
-
-  if(res.locals.user.username == req.params.username || res.locals.user.isAdmin == true) {
-    return next()
+  try {
+    const user = res.locals.user;
+    if(!(user && (user.username == req.params.username || user.isAdmin))) {
+      throw new UnauthorizedError();
   }
-  throw new UnauthorizedError();
-
+  return next();
+} catch (err) {
+  return next(err);
+  }
 }
 
 

@@ -62,32 +62,26 @@ class Company {
   }
 
 
-  /*
-Part Two: Adding Filtering
-
-
-  */
-
   static async filter(queryResult) {
-// SELECT * FROM companies WHERE name iLIKE 'Hudson Inc' AND num_employees > 500;
-console.log("This is the queryResult", queryResult);
-const { values, setCols } = sqlForFilter(
-  queryResult,
-  {
-    name: "name",
-    minEmployees: "num_employees",
-    maxEmployees: "num_employees"
-  });
+
+    console.log("This is the queryResult", queryResult);
+  const { values, setCols } = sqlForFilter(
+    queryResult,
+    {
+      name: "name",
+      minEmployees: "num_employees",
+      maxEmployees: "num_employees"
+    });
+    
+
+  console.log("These are the values: ", values);
+  console.log("These are the deconstr. values: ", [...values]);
+
+  console.log("This is setCols: ", setCols);
+
+  let mainQuery =  `SELECT handle, name, description, num_employees, logo_url FROM companies WHERE ${setCols}`;
   
-
-console.log("These are the values: ", values);
-console.log("These are the deconstr. values: ", [...values]);
-
-console.log("This is setCols: ", setCols);
-
-let mainQuery =  `SELECT handle, name, description, num_employees, logo_url FROM companies WHERE ${setCols}`;
-  
-  const res = await db.query(mainQuery, [...values]);
+  const res = await db.query(mainQuery, values);
   
 // console.log("This is query result: ", res);
 
@@ -102,10 +96,6 @@ let mainQuery =  `SELECT handle, name, description, num_employees, logo_url FROM
 
 
 
-
-
-
-
   /** Given a company handle, return data about company.
    *
    * Returns { handle, name, description, numEmployees, logoUrl, jobs }
@@ -116,13 +106,17 @@ let mainQuery =  `SELECT handle, name, description, num_employees, logo_url FROM
 
   static async get(handle) {
     const companyRes = await db.query(
-          `SELECT handle,
-                  name,
-                  description,
-                  num_employees AS "numEmployees",
-                  logo_url AS "logoUrl"
-           FROM companies
-           WHERE handle = $1`,
+        `SELECT c.handle,
+        c.name,
+        c.num_employees,
+        j.id,
+        j.title,
+        j.salary,
+        j.equity
+        FROM companies AS c
+        JOIN jobs AS j ON
+        c.handle = j.company_handle
+        WHERE c.handle = $1`,
         [handle]);
 
     const company = companyRes.rows[0];
