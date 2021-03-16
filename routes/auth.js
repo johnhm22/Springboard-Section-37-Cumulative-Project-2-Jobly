@@ -56,7 +56,6 @@ router.post("/register", async function (req, res, next) {
 
     // const newUser = await User.register({ ...req.body, isAdmin: false });
     const newUser = await User.register({ ...req.body, isAdmin: true}); //my code, removing isAdmin: false
-    console.log("This is req.body from auth route: ", req.body);
     const token = createToken(newUser);
     return res.status(201).json({ token });
   } catch (err) {

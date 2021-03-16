@@ -55,7 +55,6 @@ for(let data in dataToFilter){
   }
 }
 
-console.log("This is dataToFilter: ", dataToFilter);
 
   return {
     setCols: cols.join(" AND "),

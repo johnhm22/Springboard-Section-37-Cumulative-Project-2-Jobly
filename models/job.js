@@ -66,20 +66,13 @@ Part Two: Adding Filtering
       minSalary: "salary",
       hasEquity: "equity"
     });
-    
-
-  console.log("These are the values: ", values);
-  console.log("These are the deconstr. values: ", [...values]);
-
-  console.log("This is setCols: ", setCols);
+  
 
   let mainQuery =  `SELECT title, salary, equity, company_handle FROM jobs WHERE ${setCols}`;
     
     const res = await db.query(mainQuery, [...values]);
     
     const job = res.rows;
-
-    console.log("This is job: ", job)
 
       if (!job) throw new NotFoundError(`No job: ${filter}`);
 

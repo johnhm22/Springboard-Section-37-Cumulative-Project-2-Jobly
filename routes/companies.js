@@ -79,14 +79,7 @@ router.get("/filter", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-    console.log("This is req.query: ", q);
-    // return res.json(req.query);
-    // let queryResult = {
-    //   name: "bauer",
-    //   minEmployees: "5",
-    //   maxEmployees: "20"
-    // }
-
+  
     if(parseInt(q.minEmployees) > parseInt(q.maxEmployees)){
       throw new BadRequestError('Min employees cannot exceed max', 400);
     }

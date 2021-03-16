@@ -64,7 +64,6 @@ class Company {
 
   static async filter(queryResult) {
 
-    console.log("This is the queryResult", queryResult);
   const { values, setCols } = sqlForFilter(
     queryResult,
     {
@@ -74,20 +73,12 @@ class Company {
     });
     
 
-  console.log("These are the values: ", values);
-  console.log("These are the deconstr. values: ", [...values]);
-
-  console.log("This is setCols: ", setCols);
-
   let mainQuery =  `SELECT handle, name, description, num_employees, logo_url FROM companies WHERE ${setCols}`;
   
   const res = await db.query(mainQuery, values);
   
-// console.log("This is query result: ", res);
 
   const company = res.rows;
-
-  console.log("This is company: ", company)
 
     if (!company) throw new NotFoundError(`No company: ${filter}`);
 

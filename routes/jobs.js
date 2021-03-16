@@ -74,9 +74,6 @@ router.get("/filter", async function (req, res, next) {
       const errs = validator.errors.map(e => e.stack);
       throw new BadRequestError(errs);
     }
-
-
-    console.log("This is req.query: ", req.query);
  
     let queryResult = req.query
 
